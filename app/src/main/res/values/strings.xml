@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">BakingApp</string>
+
+    <string name="no_recipes">No recipes at the moment :(</string>
+    <string name="main_activity_title">Recipes</string>
+
+    <string name="ingredients">Ingredients</string>
+
+    <string name="ingredient_button_create">Set Ingredients To Widget</string>
+    <string name="ingredient_button_destroy">Clear Ingredients From Widget</string>
+
+    <string name="widget_emptyView_text">No recipe currently selected</string>
+</resources>
