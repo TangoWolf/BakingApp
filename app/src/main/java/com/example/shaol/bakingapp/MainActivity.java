@@ -23,10 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.ListItemClickListener {
-    //TODO make sure you check network connectivity
-    //TODO spruce up stepsFragment and ingredientFragment textViews
-    //TODO use savedInstanceState in StepsFragment
-    //TODO tablet layout
 
     @BindView(R.id.rv_recipes) RecyclerView mRecyclerView;
     @BindView(R.id.progress_bar) ProgressBar mProgressBar;
@@ -41,8 +37,16 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Lis
 
         ButterKnife.bind(this);
 
+        int columns;
+
+        if(findViewById(R.id.tablet_layout) != null){
+            columns = 3;
+        } else {
+            columns = 1;
+        }
+
         GridLayoutManager layoutManager =
-                new GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false);
+                new GridLayoutManager(this, columns, LinearLayoutManager.VERTICAL, false);
 
         mRecyclerView.setLayoutManager(layoutManager);
 

@@ -28,6 +28,8 @@ public class IngredientsFragment extends Fragment {
     RecyclerView recyclerView;
     @BindView(R.id.ingredient_button_create)
     Button ingredientButton;
+    @BindView(R.id.ingredient_button_destroy)
+    Button clearButton;
 
     SideListAdapter mSideListAdapter;
 
@@ -54,6 +56,8 @@ public class IngredientsFragment extends Fragment {
 
         ingredientButton.setOnClickListener(new MyClickListener(dummyIngredientsArray));
 
+        clearButton.setOnClickListener(new OtherClickListener());
+
         return rootView;
     }
 
@@ -74,6 +78,19 @@ public class IngredientsFragment extends Fragment {
             Intent intent = new Intent(getContext(), MyWidgetProvider.class);
             intent.setAction(MyWidgetProvider.UPDATE_ACTION);
             intent.putExtra("aIngredients", mIngredients);
+            getContext().sendBroadcast(intent);
+        }
+    }
+
+    public class OtherClickListener implements View.OnClickListener {
+
+        public OtherClickListener() {
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getContext(), MyWidgetProvider.class);
+            intent.setAction(MyWidgetProvider.CLEAR_ACTION);
             getContext().sendBroadcast(intent);
         }
     }

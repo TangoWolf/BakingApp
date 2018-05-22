@@ -43,6 +43,10 @@ import butterknife.ButterKnife;
  */
 
 public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
+
+    public static final String VIDEO_URL = "video url";
+    public static final String THUMBNAIL_URL = "thumbnail url";
+
     @BindView(R.id.step_description_view)
     TextView stepDescriptionView;
     @BindView(R.id.playerView)
@@ -71,6 +75,11 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
         ButterKnife.bind(this, rootView);
 
         stepDescriptionView.setText(stepDescription);
+
+        if (savedInstanceState != null) {
+            stepVideoUrl = savedInstanceState.getString(VIDEO_URL);
+            stepThumbnailUrl = savedInstanceState.getString(THUMBNAIL_URL);
+        }
 
 
         if (!stepVideoUrl.equals("")) {
@@ -197,5 +206,11 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
             releasePlayer();
             mediaSession.setActive(false);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle currentState) {
+        currentState.putString(VIDEO_URL, stepVideoUrl);
+        currentState.putString(THUMBNAIL_URL, stepThumbnailUrl);
     }
 }

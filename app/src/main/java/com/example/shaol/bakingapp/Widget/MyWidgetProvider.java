@@ -43,6 +43,15 @@ public class MyWidgetProvider extends AppWidgetProvider {
             manager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
 
             onUpdate(context, manager, appWidgetIds);
+
+        } else if (intent.getAction().equals(CLEAR_ACTION)) {
+            int[] appWidgetIds = manager.getAppWidgetIds(new ComponentName(context, MyWidgetProvider.class));
+
+            aIngredients = null;
+
+            manager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+
+            onUpdate(context, manager, appWidgetIds);
         }
         super.onReceive(context, intent);
     }
@@ -52,9 +61,6 @@ public class MyWidgetProvider extends AppWidgetProvider {
             Intent intent = new Intent(context, ListWidgetService.class);
 
             intent.putExtra("AppWidgetId", appWidgetIds[i]);
-            Bundle b = new Bundle();
-            b.putParcelableArray("Ingredient", aIngredients);
-            intent.putExtra("bundle", b);
 
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
@@ -65,31 +71,9 @@ public class MyWidgetProvider extends AppWidgetProvider {
             remoteViews.setEmptyView(R.id.widget_list_view, R.id.emptyWidgetView);
 
             appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
         }
 
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
-
-    /*public void onClear(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int i = 0; i < appWidgetIds.length; i++) {
-            Intent intent = new Intent(context, ListWidgetService.class);
-
-            Ingredients[] hope = null;
-
-            intent.putExtra("AppWidgetId", appWidgetIds[i]);
-            Bundle b = new Bundle();
-            b.putParcelableArray("Ingredient", hope);
-            intent.putExtra("bundle", b);
-
-            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_view);
-
-            remoteViews.setRemoteAdapter(appWidgetIds[i], R.id.widget_list_view, intent);
-
-            remoteViews.setEmptyView(R.id.widget_list_view, R.id.emptyWidgetView);
-
-            appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
-        }
-    }*/
 }

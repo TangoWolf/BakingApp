@@ -1,22 +1,12 @@
 package com.example.shaol.bakingapp.Widget;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import android.widget.TextView;
 
-import com.example.shaol.bakingapp.IngredientsFragment;
 import com.example.shaol.bakingapp.Models.Ingredients;
 import com.example.shaol.bakingapp.R;
-
-import java.io.Serializable;
 
 /**
  * Created by shaol on 5/20/2018.
@@ -26,7 +16,7 @@ public class ListWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new ListRemoteViewsFactory(this.getApplicationContext(), intent);
+        return new ListRemoteViewsFactory(this.getApplicationContext());
     }
 }
 
@@ -34,11 +24,9 @@ public class ListWidgetService extends RemoteViewsService {
 
         Context mContext;
         Ingredients[] aIngredients;
-        Intent thisIntent;
 
-        public ListRemoteViewsFactory(Context context, Intent intent) {
+        public ListRemoteViewsFactory(Context context) {
             mContext = context;
-            thisIntent = intent;
         }
 
         @Override
@@ -48,14 +36,7 @@ public class ListWidgetService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            Bundle leBundle = thisIntent.getBundleExtra("bundle");
-            Parcelable[] ughWhy = leBundle.getParcelableArray("Ingredient");
-            Ingredients[] ugh = new Ingredients[ughWhy.length];
-            for (int i = 0; i < ughWhy.length; i++) {
-                Ingredients aIngredient = (Ingredients) ughWhy[i];
-                ugh[i] = aIngredient;
-            }
-            aIngredients = ugh;
+            aIngredients = MyWidgetProvider.aIngredients;
         }
 
         @Override
@@ -100,5 +81,6 @@ public class ListWidgetService extends RemoteViewsService {
 
         @Override
         public void onDestroy() {
+
         }
     }
