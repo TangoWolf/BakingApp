@@ -85,9 +85,9 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
         if (!stepVideoUrl.equals("")) {
             playerImageView.setVisibility(View.GONE);
             playerView.setVisibility(View.VISIBLE);
-            initializeMediaSession();
+            if (savedInstanceState == null) {initializeMediaSession();}
             mURL = stepVideoUrl;
-            initializePlayer(Uri.parse(mURL));
+            if (savedInstanceState == null) {initializePlayer(Uri.parse(mURL));}
         } else if (!stepThumbnailUrl.equals("")) {
             playerImageView.setVisibility(View.GONE);
             playerView.setVisibility(View.VISIBLE);
@@ -147,9 +147,9 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
     }
 
     private void releasePlayer() {
-        exoPlayer.stop();
-        exoPlayer.release();
-        exoPlayer = null;
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
     }
 
     private class MySessionCallback extends MediaSessionCompat.Callback {
@@ -202,7 +202,7 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (playerView.getVisibility() == View.VISIBLE) {
+        if (playerView.getVisibility() == View.VISIBLE && exoPlayer != null) {
             releasePlayer();
             mediaSession.setActive(false);
         }
