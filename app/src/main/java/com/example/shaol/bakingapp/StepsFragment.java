@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -46,6 +47,9 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
 
     public static final String VIDEO_URL = "video url";
     public static final String THUMBNAIL_URL = "thumbnail url";
+    public static final String PLAYER_POSITION = "player position";
+    public static final String PLAYER_WINDOW = "player window";
+    public static final String PLAYER_STATE = "player state";
 
     @BindView(R.id.step_description_view)
     TextView stepDescriptionView;
@@ -58,6 +62,9 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
     String stepVideoUrl;
     String stepThumbnailUrl;
     String mURL;
+    int window = C.INDEX_UNSET;
+    long playerPosition = C.TIME_UNSET;
+    boolean playPause = true;
     private SimpleExoPlayer exoPlayer;
     private MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
@@ -79,21 +86,30 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
         if (savedInstanceState != null) {
             stepVideoUrl = savedInstanceState.getString(VIDEO_URL);
             stepThumbnailUrl = savedInstanceState.getString(THUMBNAIL_URL);
+            playerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+            window = savedInstanceState.getInt(PLAYER_WINDOW);
+            playPause = savedInstanceState.getBoolean(PLAYER_STATE);
         }
-
 
         if (!stepVideoUrl.equals("")) {
             playerImageView.setVisibility(View.GONE);
             playerView.setVisibility(View.VISIBLE);
-            if (savedInstanceState == null) {initializeMediaSession();}
-            mURL = stepVideoUrl;
-            if (savedInstanceState == null) {initializePlayer(Uri.parse(mURL));}
-        } else if (!stepThumbnailUrl.equals("")) {
-            playerImageView.setVisibility(View.GONE);
-            playerView.setVisibility(View.VISIBLE);
             initializeMediaSession();
-            mURL = stepThumbnailUrl;
+            mURL = stepVideoUrl;
             initializePlayer(Uri.parse(mURL));
+        } else if (!stepThumbnailUrl.equals("")) {
+            playerImageView.setVisibility(View.VISIBLE);
+            playerView.setVisibility(View.GONE);
+            String check = stepThumbnailUrl.substring(stepThumbnailUrl.length() - 3);
+            if (check.equals("bmp") | check.equals("jpg") | check.equals("png")) {
+                mURL = stepThumbnailUrl;
+            } else {
+                mURL = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Touched_by_His_Noodly_Appendage_HD.jpg/1200px-Touched_by_His_Noodly_Appendage_HD.jpg";
+            }
+            Uri mUri = Uri.parse(mURL);
+            Picasso.get()
+                    .load(mUri)
+                    .into(playerImageView);
         } else {
             playerImageView.setVisibility(View.VISIBLE);
             playerView.setVisibility(View.GONE);
@@ -141,8 +157,11 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
             String userAgent = Util.getUserAgent(getContext(), "BakingApp");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+            if (window != C.INDEX_UNSET) {
+                exoPlayer.seekTo(window, playerPosition);
+            }
             exoPlayer.prepare(mediaSource);
-            exoPlayer.setPlayWhenReady(true);
+            exoPlayer.setPlayWhenReady(playPause);
         }
     }
 
@@ -200,9 +219,32 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (playerView.getVisibility() == View.VISIBLE && exoPlayer != null) {
+            window = exoPlayer.getCurrentWindowIndex();
+            playerPosition = exoPlayer.getCurrentPosition();
+            playPause = exoPlayer.getPlayWhenReady();
+            releasePlayer();
+            mediaSession.setActive(false);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (stepVideoUrl != null && !stepVideoUrl.equals("")){
+            initializeMediaSession();
+            initializePlayer(Uri.parse(stepVideoUrl));
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (playerView.getVisibility() == View.VISIBLE && exoPlayer != null) {
+            playerPosition = exoPlayer.getCurrentPosition();
+            playPause = exoPlayer.getPlayWhenReady();
             releasePlayer();
             mediaSession.setActive(false);
         }
@@ -212,5 +254,8 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
     public void onSaveInstanceState(Bundle currentState) {
         currentState.putString(VIDEO_URL, stepVideoUrl);
         currentState.putString(THUMBNAIL_URL, stepThumbnailUrl);
+        currentState.putLong(PLAYER_POSITION, playerPosition);
+        currentState.putInt(PLAYER_WINDOW, window);
+        currentState.putBoolean(PLAYER_STATE, playPause);
     }
 }

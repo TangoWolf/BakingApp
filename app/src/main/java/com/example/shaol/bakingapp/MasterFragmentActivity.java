@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.example.shaol.bakingapp.Models.Ingredients;
 import com.example.shaol.bakingapp.Models.Steps;
@@ -21,6 +23,8 @@ public class MasterFragmentActivity extends AppCompatActivity implements MasterL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_fragment);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (findViewById(R.id.side_fragment) != null) {
             mTwoPane = true;
@@ -42,6 +46,16 @@ public class MasterFragmentActivity extends AppCompatActivity implements MasterL
             mTwoPane = false;
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void onRecipeSelected(@Nullable Ingredients[] ingredients, @Nullable Steps stepsInfo, int position) {
