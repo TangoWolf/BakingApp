@@ -77,6 +77,8 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        setRetainInstance(true);
+
         View rootView = inflater.inflate(R.layout.fragment_step_view, container, false);
 
         ButterKnife.bind(this, rootView);
@@ -160,7 +162,7 @@ public class StepsFragment extends Fragment implements ExoPlayer.EventListener {
             if (window != C.INDEX_UNSET) {
                 exoPlayer.seekTo(window, playerPosition);
             }
-            exoPlayer.prepare(mediaSource);
+            exoPlayer.prepare(mediaSource, false, false);
             exoPlayer.setPlayWhenReady(playPause);
         }
     }

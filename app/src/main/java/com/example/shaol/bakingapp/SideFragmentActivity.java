@@ -23,6 +23,10 @@ import butterknife.ButterKnife;
 
 public class SideFragmentActivity extends AppCompatActivity {
 
+    private StepsFragment mStepFragment;
+
+    private static final String TAG_STEP_FRAGMENT = "StepFragment";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,19 +53,24 @@ public class SideFragmentActivity extends AppCompatActivity {
                     .add(R.id.side_fragment, iFragment)
                     .commit();
         } else {
-            StepsFragment sFragment = new StepsFragment();
-
-            String description = data.getString("description");
-            String videoURL = data.getString("videoURL");
-            String thumbnailURL = data.getString("thumbnail");
-
-            sFragment.setSteps(description, videoURL, thumbnailURL);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 
-            fragmentManager.beginTransaction()
-                    .add(R.id.side_fragment, sFragment)
-                    .commit();
+            mStepFragment = (StepsFragment) fragmentManager.findFragmentByTag(TAG_STEP_FRAGMENT);
+
+            if (mStepFragment == null) {
+                StepsFragment sFragment = new StepsFragment();
+
+                String description = data.getString("description");
+                String videoURL = data.getString("videoURL");
+                String thumbnailURL = data.getString("thumbnail");
+
+                sFragment.setSteps(description, videoURL, thumbnailURL);
+
+                fragmentManager.beginTransaction()
+                        .add(R.id.side_fragment, sFragment, TAG_STEP_FRAGMENT)
+                        .commit();
+            }
         }
     }
 

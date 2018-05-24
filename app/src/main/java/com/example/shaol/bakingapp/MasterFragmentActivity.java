@@ -44,6 +44,7 @@ public class MasterFragmentActivity extends AppCompatActivity implements MasterL
                     .commit();
         } else {
             mTwoPane = false;
+
         }
 
     }

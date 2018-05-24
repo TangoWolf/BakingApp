@@ -38,7 +38,8 @@
         <activity android:name=".MasterFragmentActivity"
             android:parentActivityName=".MainActivity"
             android:launchMode="singleTop"/>
-        <activity android:name=".SideFragmentActivity" android:configChanges="orientation|screenSize" android:parentActivityName=".MasterFragmentActivity"/>
+        <activity android:name=".SideFragmentActivity"
+            android:parentActivityName=".MasterFragmentActivity"/>
         <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
